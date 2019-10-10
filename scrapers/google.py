@@ -1,36 +1,37 @@
-
 import json
-# conn = http.client.HTTPSConnection("ai.google")
-
-# payload = ""
-
-# conn.request("GET", "/static/data/authors.json", payload)
-
-# res = conn.getresponse()
-# data = res.read()
-
-
-
-# json_obj = json.loads(data)
-
-# print(json_obj)
 import requests
+import os
+import csv
 
 url = "https://ai.google/static/data/authors.json"
+organitation= 'Google'
+os.getcwd()
 
-payload = ""
-response = requests.request("GET", url, data=payload)
+#json file 
+savefile = os.getcwd()+'/../Data/google/google_authors.json'
+#csv file (name,organitation)
+savecsv= os.getcwd()+'/../Data/google/google_authors.csv'
+
+response = requests.request("GET", url)
+
+print(response.status_code)
+print(response.headers['content-type'])
+print(response.encoding)
 
 content =response.content
 jsoncontent = json.loads(response.content)
 
-print(json.loads(content))
+authorscsv=[]
+for author in jsoncontent['authors']:
+    authorscsv.append([author['name'],organitation])
+    print(author['name'],organitation)
 
-# with open('goole.json', 'wb') as f:
-#     f.write(response.content)
+with open(savecsv, 'w') as f:
+    writer = csv.writer(f)
+    writer.writerows(authorscsv)    
 
 
-# Retrieve HTTP meta-data
-print(response.status_code)
-print(response.headers['content-type'])
-print(response.encoding)
+with open(savefile, 'wb') as f:
+    f.write(response.content)
+print("file saved")
+
